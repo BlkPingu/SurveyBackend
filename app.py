@@ -1,4 +1,7 @@
 from flask import Flask, request, redirect, url_for
+import jwt
+
+
 
 app = Flask(__name__)
 
@@ -6,31 +9,26 @@ app = Flask(__name__)
 @app.route('/api/meta', methods=['PUT'])
 def meta():
     if request.method == 'PUT':
-
+        # nimm token und decode
+        # wenn decode ok
+        # check payload
+        # wenn ok write und 200
+        # wenn schrott 404
 
         return Response(status=200)
 
 @app.route('/api/soundfile', methods=['PUT'])
 def soundfile():
     if request.method == 'PUT':
+        # nimm token und decode
+        # wenn decode ok
+        # check payload
+        # wenn ok write und 200
+        # wenn schrott 404
 
 
         return Response(status=200)
 
-
-
-"""
-api functions
-"""
-
-def saveMeta(json):
-    #to-do
-    return True
-
-
-def saveSoundfile(data):
-    #todo
-    return True
 
 
 if __name__ == '__main__':

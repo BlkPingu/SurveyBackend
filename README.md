@@ -1,6 +1,7 @@
 # Backend
 
-- Quelle: [How to build a RESTful API in Python](https://scotch.io/tutorials/build-a-restful-api-with-flask-the-tdd-way)
+- [How to build a RESTful API in Python](https://scotch.io/tutorials/build-a-restful-api-with-flask-the-tdd-way)
+- [JWT as pyjwt](https://realpython.com/token-based-authentication-with-flask/)
 
 
 
