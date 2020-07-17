@@ -1,9 +1,14 @@
 from flask import Flask, request, redirect, url_for
 import jwt
+from flask_cors import CORS
+
 from api import decode_auth_token
 
-app = Flask(__name__)
+#cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+
+app = Flask(__name__)
+CORS(app)
 
 # This will let us Create a new book and save it in our database
 @app.route('/meta', methods=['PUT'])
