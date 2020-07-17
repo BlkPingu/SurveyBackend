@@ -2,9 +2,8 @@ from flask import Flask, request, redirect, url_for
 import jwt
 from api import decode_auth_token
 
-__name__ = 'SurveyBackend'
-
 app = Flask(__name__)
+
 
 # This will let us Create a new book and save it in our database
 @app.route('/meta', methods=['PUT'])
@@ -21,7 +20,7 @@ def meta():
         # wenn schrott 404
 
         return Response(status=200)
-    else: return Response(status=404)
+    else: return Response(status=403)
 
 @app.route('/soundfile', methods=['PUT'])
 def soundfile():
@@ -36,10 +35,9 @@ def soundfile():
         # wenn ok write und 200
         # wenn schrott 404
         return Response(status=200)
-    else: return Response(status=404)
+    else: return Response(status=403)
 
 
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run(host='127.0.0.1', port=4996, debug=True, ssl_context=context)
+    app.run(host='127.0.0.1', port=4996, debug=True)
