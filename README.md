@@ -2,6 +2,8 @@
 
 - [How to build a RESTful API in Python](https://scotch.io/tutorials/build-a-restful-api-with-flask-the-tdd-way)
 - [JWT as pyjwt](https://realpython.com/token-based-authentication-with-flask/)
+- [https](https://stackoverflow.com/questions/29458548/can-you-add-https-functionality-to-a-python-flask-web-server)
+- [logging](https://code-maven.com/python-flask-logging)
 
 
 
