@@ -6,7 +6,26 @@
 - [logging](https://code-maven.com/python-flask-logging)
 
 
+### Get Started
 
+```bash
+python3 -m venv /foo/bar/
+```
+```bash
+cd /foo/bar/
+```
+```bash
+git clone git@github.com:BlkPingu/SurveyBackend.git
+```
+```bash
+source bin/activate
+```
+```bash
+pip3 install -r requirements.txt
+```
+```bash
+python3 SurveyBackend/app.py
+```
 
 
 ### API setup
