@@ -8,7 +8,7 @@ def saveSoundfile(data):
     return True
 
 @staticmethod
-def decode_auth_token(auth_token):
+def decode_auth_token(auth_token, app):
     """
     Decodes the auth token
     :param auth_token:
