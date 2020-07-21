@@ -11,11 +11,6 @@ def saveSoundfile(data):
 
 @staticmethod
 def decode_auth_token(auth_token, app):
-    """
-    Decodes the auth token
-    :param auth_token:
-    :return: integer|string
-    """
     try:
         payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
         return payload['sub']

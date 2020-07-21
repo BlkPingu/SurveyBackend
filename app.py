@@ -1,8 +1,9 @@
-from flask import Flask, request, redirect, url_for
-import jwt
+from flask import Flask, request, redirect, url_for, Response
 from flask_cors import CORS
 from api import decode_auth_token
 from flask_sqlalchemy import SQLAlchemy
+import jwt
+import secrets
 
 
 
@@ -12,12 +13,39 @@ app = Flask(__name__)
 CORS(app, expose_headers='Authorization', resources={r"/api/*": {"origins": "*"}})
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/SurveyBackendEnv/database/meta.db'
 db = SQLAlchemy(app)
+meta_keys = ["firstName","lastName","dateOfBirth","nativeLanguage","dateTime","sessionID"]
+
+secret_key = secrets.token_hex(16)
+# app.config['SECRET_KEY'] = secret_key
+app.config['SECRET_KEY'] = 'secret'
 
 
+def validate_json_payload(meta_keys, meta_data):
+  for key in meta_keys:
+    if key not in meta_data:
+      return False
+  return True
 
-# This will let us Create a new book and save it in our database
+
 @app.route('/meta', methods=['PUT'])
 def meta():
+    meta_data = request.json
+    if request.method == 'PUT' and validate_json_payload(meta_data, meta_keys):
+
+        # to-do: put that shit in a database
+
+        print(meta_data)
+
+        new_token = encode_auth_token(meta_data)
+
+        print(new_token)
+
+        return {'token': str(new_token)}, 200
+    else:
+        return 403
+
+@app.route('/soundfile', methods=['PUT'])
+def soundfile():
     if request.method == 'PUT':
         auth_token = request.headers.get('Authorization')
         payload = decode_auth_token(auth_token, app)
@@ -32,21 +60,31 @@ def meta():
         return Response(status=200)
     else: return Response(status=403)
 
-@app.route('/soundfile', methods=['PUT'])
-def soundfile():
-    if request.method == 'PUT':
-        auth_token = request.headers.get('authorization')
-        payload = decode_auth_token(auth_token, app)
-        print(payload)
 
-        # nimm token und decode
-        # wenn decode ok
-        # check payload
-        # wenn ok write und 200
-        # wenn schrott 403
+def encode_auth_token(payload):
+    """
+    Generates the Auth Token
+    :return: string
+    """
+    try:
+        return jwt.encode(
+            payload,
+            app.config.get('SECRET_KEY'),
+            algorithm='HS256'
+        )
+    except Exception as e:
+        return e
 
-        return Response(status=200)
-    else: return Response(status=403)
+staticmethod
+def decode_auth_token(auth_token):
+    try:
+        payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
+        return payload['sub']
+    except jwt.ExpiredSignatureError:
+        return 'Signature expired. Please log in again.'
+    except jwt.InvalidTokenError:
+        return 'Invalid token. Please log in again.'
+
 
 
 class User(db.Model):
