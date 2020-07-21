@@ -36,20 +36,23 @@ def meta():
 
         print(meta_data)
 
-        new_token = encode_auth_token(meta_data)
+        token = encode_auth_token(meta_data)
 
         print(new_token)
 
-        return {'token': str(new_token)}, 200
+        return {'token': str(token)}, 200
     else:
         return 403
 
 @app.route('/soundfile', methods=['PUT'])
 def soundfile():
     if request.method == 'PUT':
-        auth_token = request.headers.get('Authorization')
-        payload = decode_auth_token(auth_token, app)
-        print(payload)
+        token = request.authorization
+
+        print(token)
+
+        # payload = decode_auth_token(token)
+        # print(payload)
 
         # nimm token und decode
         # wenn decode ok
@@ -57,15 +60,12 @@ def soundfile():
         # wenn ok write und 200
         # wenn schrott 403
 
-        return Response(status=200)
-    else: return Response(status=403)
+        return 200
+    else:
+      return 403
 
 
 def encode_auth_token(payload):
-    """
-    Generates the Auth Token
-    :return: string
-    """
     try:
         return jwt.encode(
             payload,
@@ -75,11 +75,11 @@ def encode_auth_token(payload):
     except Exception as e:
         return e
 
-staticmethod
+
 def decode_auth_token(auth_token):
     try:
         payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
-        return payload['sub']
+        return payload
     except jwt.ExpiredSignatureError:
         return 'Signature expired. Please log in again.'
     except jwt.InvalidTokenError:
