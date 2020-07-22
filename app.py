@@ -15,10 +15,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachel
 db = SQLAlchemy(app)
 meta_keys = ["firstName","lastName","dateOfBirth","nativeLanguage","dateTime","sessionID"]
 
-secret_key = secrets.token_hex(16)
-# app.config['SECRET_KEY'] = secret_key
-app.config['SECRET_KEY'] = 'secret'
-
 
 def validate_json_payload(meta_keys, meta_data):
   for key in meta_keys:
@@ -38,18 +34,17 @@ def meta():
 
         token = encode_auth_token(meta_data)
 
-        print(new_token)
+        print(token)
 
-        return {'token': str(token)}, 200
+        return Response(response={'token': str(token)},content_type='application/json',status=200)
     else:
-        return 403
+        return Response(status=403)
 
 @app.route('/soundfile', methods=['PUT'])
 def soundfile():
     if request.method == 'PUT':
-        token = request.authorization
 
-        print(token)
+        # print(request.authorization)
 
         # payload = decode_auth_token(token)
         # print(payload)
@@ -60,9 +55,9 @@ def soundfile():
         # wenn ok write und 200
         # wenn schrott 403
 
-        return 200
+        return Response(status=200)
     else:
-      return 403
+      return Response(status=403)
 
 
 def encode_auth_token(payload):
@@ -118,5 +113,8 @@ def new_metadata(db, data):
 
 
 if __name__ == '__main__':
+
+    secret_key = secrets.token_hex(16)
+    # app.config['SECRET_KEY'] = secret_key
     app.config['SECRET_KEY'] = 'm1uqfiDG.!KcgS%;E+QSrY%2+:m+6V'
     app.run(host='127.0.0.1', port=4996, debug=True)
