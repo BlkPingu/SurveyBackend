@@ -39,7 +39,7 @@ class Meta(db.Model):
 
 def encode_auth_token(payload):
     signed_token = {
-          'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=2),
+          'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=1),
           'iat': datetime.datetime.utcnow(),
           'firstName':payload['firstName'],
           'lastName':payload['lastName'],
@@ -58,20 +58,12 @@ def encode_auth_token(payload):
         return e
 
 
-def decode_auth_token(auth_token):
-    try:
-        payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
-        return payload
-    except jwt.ExpiredSignatureError:
-        return 'Signature Expired for auth_token: ' + auth_token.decode()
-    except jwt.InvalidTokenError:
-        return 'Invalid auth_token' + auth_token.decode()
-
 def validate_json_payload(meta_keys, meta_data):
   for key in meta_keys:
     if key not in meta_data:
       return False
   return True
+
 
 def saveMeta(json):
     #to-do
@@ -82,16 +74,23 @@ def saveSoundfile(data):
     #todo
     return True
 
+
 def decode_auth_token(auth_token):
     try:
-        print(auth_token)
         payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
-        print(payload)
         return payload
     except jwt.ExpiredSignatureError:
-        return 'Signature expired. Please log in again.'
+        return {'msg':'Signature expired. Please log in again.'}, 403
     except jwt.InvalidTokenError:
-        return 'Invalid token. Please log in again.'
+        return {'msg':'Invalid token. Please log in again.'}, 403
+
+
+def get_token(bearer_token):
+    PREFIX = 'Bearer '
+    if not bearer_token.startswith(PREFIX):
+        return None
+    return bearer_token[len(PREFIX):]
+
 
 @app.route('/meta', methods=['PUT'])
 def meta():
@@ -111,21 +110,26 @@ def meta():
 
 @app.route('/soundfile', methods=['PUT'])
 def soundfile():
-    auth = request.headers['Authorization'].encode()
+    bearer_token = request.headers['Authorization']
+    token_string = get_token(bearer_token)
 
-    if request.method == 'PUT' and auth is not None:
 
-        token = decode_auth_token(auth)
+    if request.method == 'PUT' and token_string:
 
-        print(token['firstName'])
-        print(token['lastName'])
+        token_bytes = token_string.encode()
+        token_json = decode_auth_token(token_bytes)
+
+        print(token_json)
+
+        print(token_json['firstName'])
+        print(token_json['lastName'])
 
 
         # to-do: write payload into if-not-exists new folder with saveSoundfile
 
         return {'msg': "Successfully submitted Soundfile"}, 200
     else:
-      return {'msg':'Wrong request method or failed authorization'}, 403
+        return {'msg':'Wrong request method or failed authorization'}, 403
 
 
 
