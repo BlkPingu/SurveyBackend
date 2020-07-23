@@ -1,85 +1,20 @@
-from flask import Flask, request, redirect, url_for, Response
+from flask import Flask, request, redirect, url_for, Response, jsonify
 from flask_cors import CORS
-from api import decode_auth_token
 from flask_sqlalchemy import SQLAlchemy
+import secrets
 import jwt
 import secrets
-
-
-
-
+import datetime
 
 app = Flask(__name__)
-CORS(app, expose_headers='Authorization', resources={r"/api/*": {"origins": "*"}})
+CORS(app, expose_headers='Authorization', resources={r"/*": {"origins": "*"}})
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/SurveyBackendEnv/database/meta.db'
 db = SQLAlchemy(app)
 meta_keys = ["firstName","lastName","dateOfBirth","nativeLanguage","dateTime","sessionID"]
 
-
-def validate_json_payload(meta_keys, meta_data):
-  for key in meta_keys:
-    if key not in meta_data:
-      return False
-  return True
-
-
-@app.route('/meta', methods=['PUT'])
-def meta():
-    meta_data = request.json
-    if request.method == 'PUT' and validate_json_payload(meta_data, meta_keys):
-
-        # to-do: put that shit in a database
-
-        print(meta_data)
-
-        token = encode_auth_token(meta_data)
-
-        print(token)
-
-        return Response(response={'token': str(token)},content_type='application/json',status=200)
-    else:
-        return Response(status=403)
-
-@app.route('/soundfile', methods=['PUT'])
-def soundfile():
-    if request.method == 'PUT':
-
-        # print(request.authorization)
-
-        # payload = decode_auth_token(token)
-        # print(payload)
-
-        # nimm token und decode
-        # wenn decode ok
-        # check payload
-        # wenn ok write und 200
-        # wenn schrott 403
-
-        return Response(status=200)
-    else:
-      return Response(status=403)
-
-
-def encode_auth_token(payload):
-    try:
-        return jwt.encode(
-            payload,
-            app.config.get('SECRET_KEY'),
-            algorithm='HS256'
-        )
-    except Exception as e:
-        return e
-
-
-def decode_auth_token(auth_token):
-    try:
-        payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
-        return payload
-    except jwt.ExpiredSignatureError:
-        return 'Signature expired. Please log in again.'
-    except jwt.InvalidTokenError:
-        return 'Invalid token. Please log in again.'
-
+secret_key = secrets.token_hex(16)
+# app.config['SECRET_KEY'] = secret_key
+app.config['SECRET_KEY'] = 'secret'
 
 
 class User(db.Model):
@@ -102,19 +37,103 @@ class Meta(db.Model):
     def __repr__(self):
         return '<Session %r>' % self.session
 
-def create_new_database(db):
-    db.create_all()
-    admin = User(username='admin', email='contact@tobiaskolb.dev')
-    db.session.add(admin)
-    db.session.commit()
+def encode_auth_token(payload):
+    signed_token = {
+          'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=2),
+          'iat': datetime.datetime.utcnow(),
+          'firstName':payload['firstName'],
+          'lastName':payload['lastName'],
+          'dateOfBirth':payload['dateOfBirth'],
+          'sessionID':payload['sessionID']
+        }
 
-def new_metadata(db, data):
-    pass
+
+    try:
+        return jwt.encode(
+            signed_token,
+            app.config.get('SECRET_KEY'),
+            algorithm='HS256'
+        )
+    except Exception as e:
+        return e
+
+
+def decode_auth_token(auth_token):
+    try:
+        payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
+        return payload
+    except jwt.ExpiredSignatureError:
+        return 'Signature Expired for auth_token: ' + auth_token.decode()
+    except jwt.InvalidTokenError:
+        return 'Invalid auth_token' + auth_token.decode()
+
+def validate_json_payload(meta_keys, meta_data):
+  for key in meta_keys:
+    if key not in meta_data:
+      return False
+  return True
+
+def saveMeta(json):
+    #to-do
+    return True
+
+
+def saveSoundfile(data):
+    #todo
+    return True
+
+def decode_auth_token(auth_token):
+    try:
+        print(auth_token)
+        payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
+        print(payload)
+        return payload
+    except jwt.ExpiredSignatureError:
+        return 'Signature expired. Please log in again.'
+    except jwt.InvalidTokenError:
+        return 'Invalid token. Please log in again.'
+
+@app.route('/meta', methods=['PUT'])
+def meta():
+    meta_data = request.json
+    if request.method == 'PUT' and validate_json_payload(meta_data, meta_keys):
+
+
+        # to-do: put that shit in a database with saveMeta
+
+        token = encode_auth_token(meta_data).decode()
+
+        return {"token": token}, 200
+    else:
+        return {"msg": "Missing keys or wrong request method"}, 403
+
+
+
+@app.route('/soundfile', methods=['PUT'])
+def soundfile():
+    auth = request.headers['Authorization'].encode()
+
+    if request.method == 'PUT' and auth is not None:
+
+        token = decode_auth_token(auth)
+
+        print(token['firstName'])
+        print(token['lastName'])
+
+
+        # to-do: write payload into if-not-exists new folder with saveSoundfile
+
+        return {'msg': "Successfully submitted Soundfile"}, 200
+    else:
+      return {'msg':'Wrong request method or failed authorization'}, 403
+
+
+
+
+
 
 
 if __name__ == '__main__':
 
-    secret_key = secrets.token_hex(16)
-    # app.config['SECRET_KEY'] = secret_key
-    app.config['SECRET_KEY'] = 'm1uqfiDG.!KcgS%;E+QSrY%2+:m+6V'
-    app.run(host='127.0.0.1', port=4996, debug=True)
+
+    app.run(host='127.0.0.1', port=1337, debug=True)

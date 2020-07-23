@@ -1,6 +1,16 @@
 from app import User
 from app import db
-from app import create_new_database
+
+
+
+
+
+def create_new_database(db):
+    db.create_all()
+    admin = User(username='admin', email='contact@tobiaskolb.dev')
+    db.session.add(admin)
+    db.session.commit()
+
 
 create_new_database(db)
 
