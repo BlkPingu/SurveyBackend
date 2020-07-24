@@ -3,18 +3,18 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 import secrets
 import jwt
-import secrets
+# import secrets
 import datetime
 
 app = Flask(__name__)
 CORS(app, expose_headers='Authorization', resources={r"/*": {"origins": "*"}})
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/SurveyBackendEnv/database/meta.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/SurveyBackendEnv/database/meta.db'
 db = SQLAlchemy(app)
 meta_keys = ["firstName","lastName","dateOfBirth","nativeLanguage","dateTime","sessionID"]
 
-secret_key = secrets.token_hex(16)
+# secret_key = secrets.token_hex(16)
 # app.config['SECRET_KEY'] = secret_key
-app.config['SECRET_KEY'] = 'secret'
+# app.config['SECRET_KEY'] = 'secret'
 
 
 # from OpenSSL import SSL
@@ -130,7 +130,6 @@ def soundfile():
         print(token_json['firstName'])
         print(token_json['lastName'])
 
-
         # to-do: write payload into if-not-exists new folder with saveSoundfile
 
         return {'msg': "Successfully submitted Soundfile"}, 200
@@ -145,5 +144,10 @@ def soundfile():
 
 if __name__ == '__main__':
 
+    if app.config["ENV"] == "production":
+        app.config.from_object("config.ProductionConfig")
+    else:
+        app.config.from_object("config.DevelopmentConfig")
 
-    app.run(host='127.0.0.1', port=1337, debug=True) # ssl_context=context
+    print(f'ENV is set to: {app.config["ENV"]}')
+    app.run() # ssl_context=context
