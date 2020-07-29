@@ -1,6 +1,7 @@
 import secrets
 
 class Config(object):
+    FLASK_APP = app.py
     DEBUG = True
     SECRET_KEY = 'secret'
     SOUNDFILE_UPLOAD = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/soundfiles'
@@ -10,6 +11,7 @@ class Config(object):
 
 
 class ProductionConfig(Config):
+    FLASK_APP = 'app.py'
     DEBUG = False
     SECRET_KEY = '47f1da08191ed664aea40928f97c74ab' #secrets.token_hex(16)
     SOUNDFILE_UPLOAD = '/srv/data/soundfiles'
