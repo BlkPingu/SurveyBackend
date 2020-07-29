@@ -3,7 +3,6 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 import secrets
 import jwt
-# import secrets
 import datetime
 
 app = Flask(__name__)
