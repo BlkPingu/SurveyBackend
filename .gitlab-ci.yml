@@ -9,4 +9,3 @@ sequential:
         - pip install -r requirements.txt
         - cd /srv/backend/
         - bash production_start.sh
-        - uwsgi --socket backend.tobiaskolb.dev:443 --protocol=https -w wsgi:SurveyBackend
