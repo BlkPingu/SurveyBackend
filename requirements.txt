@@ -4,3 +4,4 @@ flask_sqlalchemy
 secrets
 jwt
 datetime
+OpenSSL
