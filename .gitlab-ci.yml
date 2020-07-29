@@ -5,5 +5,5 @@ sequential:
         - mkdir /srv/backend/
         - cp -R * /srv/backend/
         - bash /srv/backend/production_start.sh
-        - systemctl restart nginx
-        - systemctl start SurveyBackend
+        - sudo systemctl restart nginx
+        - sudo systemctl start SurveyBackend
