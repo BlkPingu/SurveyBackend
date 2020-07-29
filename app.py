@@ -10,21 +10,22 @@ app = Flask(__name__)
 
 if app.config['ENV'] == "production":
     app.config['DEBUG'] = False
-    app.config['SECRET_KEY'] = '47f1da08191ed664aea40928f97c74ab' #secrets.token_hex(16)
+    app.config['SECRET_KEY'] = 'brrr' #secrets.token_hex(16)
     app.config['SOUNDFILE_UPLOAD'] = '/srv/data/soundfiles'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///srv/data/database/meta.db'
-    app.config['HOST'] = '46.101.246.133'
-    app.config['PORT'] = 443
+    print(app.config['SECRET_KEY'])
+
 else:
     app.config['DEBUG'] = True
     app.config['SECRET_KEY'] = 'secret'
     app.config['SOUNDFILE_UPLOAD'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/soundfiles'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/database/meta.db'
-    app.config['HOST'] = '127.0.0.1'
-    app.config['PORT'] = 1337
+
+
 
 
     print(f'ENV is set to: {app.config["ENV"]}')
+    print(app.config['SECRET_KEY'])
 
 CORS(app, expose_headers='Authorization', resources={r"/*": {"origins": "*"}})
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/SurveyBackendEnv/database/meta.db'
@@ -64,7 +65,7 @@ class Meta(db.Model):
 
 def encode_auth_token(payload):
     signed_token = {
-          'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=1),
+          'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=600),
           'iat': datetime.datetime.utcnow(),
           'firstName':payload['firstName'],
           'lastName':payload['lastName'],
@@ -100,14 +101,7 @@ def saveSoundfile(data):
     return True
 
 
-def decode_auth_token(auth_token):
-    try:
-        payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
-        return payload
-    except jwt.ExpiredSignatureError:
-        return {'msg':'Signature expired. Please log in again.'}, 403
-    except jwt.InvalidTokenError:
-        return {'msg':'Invalid token. Please log in again.'}, 403
+
 
 
 def get_token(bearer_token):
@@ -136,24 +130,40 @@ def meta():
 @app.route('/soundfile', methods=['PUT'])
 def soundfile():
     bearer_token = request.headers['Authorization']
-    token_string = get_token(bearer_token)
 
 
-    if request.method == 'PUT' and token_string:
+
+    if bearer_token:
+        token_string = get_token(bearer_token)
+    else: return {'msg':'No token.'}, 403
+
+    if request.method == 'PUT':
 
         token_bytes = token_string.encode()
-        token_json = decode_auth_token(token_bytes)
 
-        print(token_json)
 
-        print(token_json['firstName'])
-        print(token_json['lastName'])
+        try:
+            payload = jwt.decode(token_bytes, app.config['SECRET_KEY'])
+
+        except jwt.ExpiredSignatureError:
+            return {'msg':'Signature expired. Please log in again.'}, 403
+        except jwt.InvalidTokenError:
+            return {'msg':'Invalid token. Please log in again.'}, 403
+
+
+
+
+
+        print(payload)
+        #print(app.config['SECRET_KEY'])
+        #print(token_json['firstName'])
+        #print(token_json['lastName'])
 
         # to-do: write payload into if-not-exists new folder with saveSoundfile
 
         return {'msg': "Successfully submitted Soundfile"}, 200
     else:
-        return {'msg':'Wrong request method or failed authorization'}, 403
+        return {'msg':'Wrong request method'}, 403
 
 
 
