@@ -8,10 +8,21 @@ import datetime
 app = Flask(__name__)
 
 
-if app.config["ENV"] == "production":
-    app.config.from_object("config.ProductionConfig")
+if app.config['ENV'] == "production":
+    app.config['DEBUG'] = False
+    app.config['SECRET_KEY'] = '47f1da08191ed664aea40928f97c74ab' #secrets.token_hex(16)
+    app.config['SOUNDFILE_UPLOAD'] = '/srv/data/soundfiles'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///srv/data/database/meta.db'
+    app.config['HOST'] = '46.101.246.133'
+    app.config['PORT'] = 443
 else:
-    app.config.from_object("config.DevelopmentConfig")
+    app.config['DEBUG'] = True
+    app.config['SECRET_KEY'] = 'secret'
+    app.config['SOUNDFILE_UPLOAD'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/soundfiles'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/database/meta.db'
+    app.config['HOST'] = '127.0.0.1'
+    app.config['PORT'] = 1337
+
 
     print(f'ENV is set to: {app.config["ENV"]}')
 

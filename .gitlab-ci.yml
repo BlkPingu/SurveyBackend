@@ -1,10 +1,12 @@
 sequential:
     script:
+        - kill $(pgrep -f flask) || echo "no flask server running"
         - rm -rf /srv/backend/
         - mkdir /srv/backend/
         - cp -R * /srv/backend/
         - source /srv/SurveyBackendEnv/bin/activate
         - pip uninstall -y -r <(pip freeze) || echo "no packages installed"
         - pip install -r requirements.txt
+        - FLASK_APP=app.py
         - export FLASK_ENV=production
         - flask run
