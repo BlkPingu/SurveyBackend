@@ -4,8 +4,4 @@ sequential:
         - rm -rf /srv/backend/
         - mkdir /srv/backend/
         - cp -R * /srv/backend/
-        - source /srv/SurveyBackendEnv/bin/activate
-        - pip3 uninstall -y -r <(pip freeze) || echo "no packages installed"
-        - pip3 install -r requirements.txt
-        - cd /srv/backend/
-        - bash production_start.sh
+        - bash /srv/backend/production_start.sh
