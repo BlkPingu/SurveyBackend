@@ -2,20 +2,20 @@ import secrets
 
 class Config(object):
     DEBUG = True
-    SECRET_KEY = "secret"
+    SECRET_KEY = 'secret'
+    SOUNDFILE_UPLOAD = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/soundfiles'
+    SQLALCHEMY_DATABASE_URI = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/database/meta.db'
     HOST = '127.0.0.1'
     PORT = 1337
-    SOUNDFILE_UPLOAD = "/home/username/projects/my_app/app/static/images/uploads"
-    SQLALCHEMY_DATABASE_URI = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/SurveyBackendEnv/database/meta.db'
 
 
 class ProductionConfig(Config):
     DEBUG = False
-    SECRET_KEY = secrets.token_hex(16)
-    SOUNDFILE_UPLOAD = "/home/username/app/app/static/images/uploads"
-    HOST = '46.101.246.133'
-    PORT = 5000
-    DATABASE = 'path'
+    SECRET_KEY = '47f1da08191ed664aea40928f97c74ab' #secrets.token_hex(16)
+    SOUNDFILE_UPLOAD = '/srv/data/soundfiles'
+    SQLALCHEMY_DATABASE_URI = 'sqlite://///srv/data/database/meta.db'
+    HOST = 'www.tobiaskolb.dev'
+    PORT = 443
 
 class DevelopmentConfig(Config):
     pass
