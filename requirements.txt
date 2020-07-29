@@ -1,8 +1,8 @@
+pkg_resources
+OpenSSL
 flask
 flask_cors
 flask_sqlalchemy
 secrets
 jwt
 datetime
-OpenSSL
-pkg_resources
