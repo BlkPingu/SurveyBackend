@@ -57,3 +57,22 @@ python3 SurveyBackend/app.py
 - geschlecht
 - muttersprache
 - alter
+
+
+
+
+INFO SERVER:
+
+
+
+[Server setup, nginx and flask](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uswgi-and-nginx-on-ubuntu-18-04):
+
+- `sudo systemctl restart nginx`: Start Nginx Server
+- `sudo systemctl start SurveyBackend`: Start uWSGI Server (Flask)
+- `sudo systemctl status myproject`: Status von uWSGI
+- `sudo less /var/log/nginx/error.log`: checks the Nginx error logs.
+- `sudo less /var/log/nginx/access.log`: checks the Nginx access logs.
+- `sudo journalctl -u nginx`: checks the Nginx process logs.
+- `sudo journalctl -u myproject`: checks your Flask app’s uWSGI logs.
+
+
