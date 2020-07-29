@@ -1,7 +1,7 @@
-uwsgi
 setuptools
 flask
 flask_cors
 flask_sqlalchemy
 jwt
 datetime
+uwsgi
