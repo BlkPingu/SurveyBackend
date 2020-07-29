@@ -1,4 +1,3 @@
-pkg_resources
 OpenSSL
 flask
 flask_cors
