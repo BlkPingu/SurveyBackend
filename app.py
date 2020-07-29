@@ -129,18 +129,23 @@ def meta():
 
 @app.route('/soundfile', methods=['PUT'])
 def soundfile():
-    bearer_token = request.headers['Authorization']
 
 
 
-    if bearer_token:
-        token_string = get_token(bearer_token)
-    else: return {'msg':'No token.'}, 403
 
     if request.method == 'PUT':
 
-        token_bytes = token_string.encode()
 
+        try:
+            bearer_token = request.headers['Authorization']
+        except KeyError:
+            return {'msg':'No token.'}, 403
+
+        if bearer_token:
+            token_string = get_token(bearer_token)
+        else: return {'msg':'No token.'}, 403
+
+        token_bytes = token_string.encode()
 
         try:
             payload = jwt.decode(token_bytes, app.config['SECRET_KEY'])

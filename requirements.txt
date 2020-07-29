@@ -1,3 +1,4 @@
+uwsgi
 setuptools
 flask
 flask_cors
