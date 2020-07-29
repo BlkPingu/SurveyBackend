@@ -149,4 +149,4 @@ if __name__ == '__main__':
         app.config.from_object("config.DevelopmentConfig")
 
     print(f'ENV is set to: {app.config["ENV"]}')
-    app.run() # ssl_context=context
+    # ssl_context=context
