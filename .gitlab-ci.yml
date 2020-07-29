@@ -7,6 +7,6 @@ sequential:
         - source /srv/SurveyBackendEnv/bin/activate
         - pip uninstall -y -r <(pip freeze) || echo "no packages installed"
         - pip install -r requirements.txt
-        - export FLASK_APP=app.py
-        - export FLASK_ENV=production
-        - flask run
+        - cd /srv/backend/
+        - bash production_start.sh
+        - uwsgi --socket backend.tobiaskolb.dev:443 --protocol=https -w wsgi:SurveyBackend

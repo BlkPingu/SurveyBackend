@@ -1,5 +1,5 @@
-from app import User
-from app import db
+from SurveyBackend import User
+from SurveyBackend import db
 
 
 
