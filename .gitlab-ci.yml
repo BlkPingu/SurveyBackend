@@ -3,7 +3,7 @@ sequential:
         - rm -rf /srv/backend/
         - mkdir /srv/backend/
         - cp -R * /srv/backend/
-        - source /srv/SurveyBackendEnv/bin/activate
+        - source /srv/SurveyBackendEnv/bin/activate || deactivate
         - pip uninstall -y -r <(pip freeze) || echo "no packages installed"
         - pip install -r requirements.txt
         - export FLASK_ENV=production
