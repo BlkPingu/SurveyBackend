@@ -5,3 +5,4 @@ secrets
 jwt
 datetime
 OpenSSL
+pkg_resources
