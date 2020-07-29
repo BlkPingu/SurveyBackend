@@ -1,6 +1,6 @@
+setuptools
 flask
 flask_cors
 flask_sqlalchemy
-secrets
 jwt
 datetime
