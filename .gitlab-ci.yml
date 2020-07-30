@@ -2,6 +2,7 @@ sequential:
     script:
         - kill $(pgrep -f flask) || echo "no flask server running"
         - rm -rf /srv/backend/*
+        - mkdir -m 774 /srv/backend/__pycache__/
         - cp -R * /srv/backend/
         - bash /srv/backend/production_start.sh
         # - sudo chown -R www-data:www-data /srv/backend
