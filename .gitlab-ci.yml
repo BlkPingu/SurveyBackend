@@ -5,6 +5,5 @@ sequential:
         - mkdir /srv/backend/
         - cp -R * /srv/backend/
         - bash /srv/backend/production_start.sh
-        - chown -R www-data:www-data /srv/backend
-        # - echo 11231123 | sudo -S systemctl restart nginx
-        # - echo 11231123 | sudo -S systemctl start SurveyBackend
+        - sudo chown -R www-data:www-data /srv/backend
+        - sudo -S systemctl restart SurveyBackend.service
