@@ -111,7 +111,7 @@ def get_token(bearer_token):
     return bearer_token[len(PREFIX):]
 
 
-@app.route('/', methods=['GET'])
+@app.route('/xyz', methods=['GET'])
 def generic():
     return {'msg':'hello i m flask'},  200
 
