@@ -13,8 +13,6 @@ if app.config['ENV'] == "production":
     app.config['SECRET_KEY'] = 'brrr' #secrets.token_hex(16)
     app.config['SOUNDFILE_UPLOAD'] = '/srv/data/soundfiles'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///srv/data/database/meta.db'
-    print(app.config['SECRET_KEY'])
-
 else:
     app.config['DEBUG'] = True
     app.config['SECRET_KEY'] = 'secret'
@@ -120,16 +118,17 @@ def generic():
 @app.route('/meta', methods=['PUT'])
 def meta():
     meta_data = request.json
-    if request.method == 'PUT' and validate_json_payload(meta_data, meta_keys):
+    # if request.method == 'PUT' and validate_json_payload(meta_data, meta_keys):
 
 
         # to-do: put that shit in a database with saveMeta
 
-        token = encode_auth_token(meta_data).decode()
+    #   token = encode_auth_token(meta_data).decode()
 
-        return {"token": token}, 200
-    else:
-        return {"msg": "Missing keys or wrong request method"}, 403
+    #   return {"token": token}, 200
+    # else:
+    #    return {"msg": "Missing keys or wrong request method"}, 403
+    return {"msg": "meta works now"}, 200
 
 
 
