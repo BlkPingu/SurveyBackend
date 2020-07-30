@@ -1,9 +1,8 @@
 sequential:
     script:
         - kill $(pgrep -f flask) || echo "no flask server running"
-        - rm -rf /srv/backend/
-        - mkdir /srv/backend/
+        - rm -rf /srv/backend/*
         - cp -R * /srv/backend/
         - bash /srv/backend/production_start.sh
-        - sudo chown -R www-data:www-data /srv/backend
-        - sudo -S systemctl restart SurveyBackend.service
+        # - sudo chown -R www-data:www-data /srv/backend
+        # - sudo -S systemctl restart SurveyBackend.service
