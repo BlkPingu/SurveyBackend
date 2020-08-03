@@ -94,14 +94,6 @@ def saveMeta(json):
     return True
 
 
-def saveSoundfile(data):
-    #todo
-    return True
-
-
-
-
-
 def get_token(bearer_token):
     PREFIX = 'Bearer '
     if not bearer_token.startswith(PREFIX):
@@ -111,24 +103,24 @@ def get_token(bearer_token):
 
 @app.route('/xyz', methods=['GET'])
 def generic():
-    return {'msg':'hello i m flask'},  200
+    return {'msg':'hello i am flask'},  200
 
 
 
 @app.route('/meta', methods=['PUT'])
 def meta():
     meta_data = request.json
-    # if request.method == 'PUT' and validate_json_payload(meta_data, meta_keys):
+    if request.method == 'PUT' and validate_json_payload(meta_data, meta_keys):
 
 
         # to-do: put that shit in a database with saveMeta
 
-    #   token = encode_auth_token(meta_data).decode()
+        token = encode_auth_token(meta_data).decode()
 
-    #   return {"token": token}, 200
-    # else:
-    #    return {"msg": "Missing keys or wrong request method"}, 403
-    return {"msg": "meta works now"}, 200
+        return {"token": token}, 200
+    else:
+        return {"msg": "Missing keys or wrong request method"}, 403
+    # return {"msg": "meta works now"}, 200
 
 
 
@@ -138,7 +130,7 @@ def soundfile():
 
 
 
-    if request.method == 'PUT':
+    if request.method == 'POST':
 
 
         try:
@@ -160,14 +152,20 @@ def soundfile():
         except jwt.InvalidTokenError:
             return {'msg':'Invalid token. Please log in again.'}, 403
 
+        if request['filename']:
 
+        if foldername['filename']:
+
+        if 'audio' in request.files:
+            filename = images.save(request.files['audio'])
+            image_filename = filename
+            image_url = images.url(filename)
 
 
 
         print(payload)
-        #print(app.config['SECRET_KEY'])
-        #print(token_json['firstName'])
-        #print(token_json['lastName'])
+        print(token_json['firstName'])
+        print(token_json['lastName'])
 
         # to-do: write payload into if-not-exists new folder with saveSoundfile
 
