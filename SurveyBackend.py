@@ -115,12 +115,13 @@ def meta():
 
         # to-do: put that shit in a database with saveMeta
 
-        token = encode_auth_token(meta_data).decode()
+        # token = encode_auth_token(meta_data).decode()
 
-        return {"token": token}, 200
+        # return {"token": token}, 200
+        return {"msg": "meta works now"}, 200
     else:
         return {"msg": "Missing keys or wrong request method"}, 403
-    # return {"msg": "meta works now"}, 200
+    #
 
 
 
