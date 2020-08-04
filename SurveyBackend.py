@@ -132,18 +132,15 @@ def validate_token(request):
 def soundfile():
 
     token_data = validate_token(request)
-    if request.method == 'POST' and payload is not None:
 
-        print(payload)
-        print(payload['firstName'])
-        print(payload['lastName'])
+    if request.method == 'POST' and token_data is not None and request.files['audio'] is not None:
 
-        print('request.data', request.data)
-        print('request.json', request.json)
-        print('request.form', request.form)
-        print('request.files', request.files)
-        print('request.headers', request.headers)
-        file = request.files['audio']
+        print(token_data)
+        print(token_data['firstName'])
+        print(token_data['lastName'])
+
+
+
         # da noch irgendwie subfolder name in den pfad rein
         file.save(os.path.join(app.config.get('SOUNDFILE_UPLOAD'),secure_filename(file.filename)))
         # filename in db schreiben
