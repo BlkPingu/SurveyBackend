@@ -153,8 +153,10 @@ def soundfile():
             return {'msg':'Invalid token. Please log in again.'}, 403
 
         if request['filename']:
+            pass
 
         if foldername['filename']:
+            pass
 
         if 'audio' in request.files:
             filename = images.save(request.files['audio'])
