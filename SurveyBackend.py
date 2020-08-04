@@ -144,16 +144,15 @@ def soundfile():
         except jwt.InvalidTokenError:
             return {'msg':'Invalid token. Please log in again.'}, 403
 
-        if request['filename']:
+        # if request['filename']:
+
+        # if foldername['filename']:
             pass
 
-        if foldername['filename']:
-            pass
-
-        if 'audio' in request.files:
-            filename = images.save(request.files['audio'])
-            image_filename = filename
-            image_url = images.url(filename)
+        # if 'audio' in request.files:
+            # filename = images.save(request.files['audio'])
+            # image_filename = filename
+            # image_url = images.url(filename)
 
 
 
