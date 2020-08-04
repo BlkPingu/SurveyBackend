@@ -33,7 +33,6 @@ meta_keys = ["firstName","lastName","dateOfBirth","nativeLanguage","dateTime","s
 
 
 
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), unique=True, nullable=False)
@@ -132,23 +131,26 @@ def validate_token(request):
 @app.route('/audio', methods=['POST'])
 def soundfile():
 
-    payload = validate_token(request)
+    token_data = validate_token(request)
     if request.method == 'POST' and payload is not None:
-
-
 
         print(payload)
         print(payload['firstName'])
         print(payload['lastName'])
 
+        print('request.data', request.data)
+        print('request.json', request.json)
+        print('request.form', request.form)
+        print('request.files', request.files)
+        print('request.headers', request.headers)
+        file = request.files['audio']
+        # da noch irgendwie subfolder name in den pfad rein
+        file.save(os.path.join(app.config.get('SOUNDFILE_UPLOAD'),secure_filename(file.filename)))
+        # filename in db schreiben
         # to-do: write payload into if-not-exists new folder with saveSoundfile
-
         resp = flask.Response("Soundfile submit worked")
         resp.headers['Access-Control-Allow-Origin'] = '*'
 
         return resp
     else:
         return {'msg':'Wrong request method or bad token'}, 403
-
-
-
