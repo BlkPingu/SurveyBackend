@@ -3,6 +3,8 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 import jwt
 import datetime
+from flask_cors import CORS,cross_origin
+
 
 app = Flask(__name__)
 
@@ -20,7 +22,7 @@ else:
 
     print(f'ENV is set to: {app.config["ENV"]}')
 
-# CORS(app, expose_headers='Authorization', resources={r"/*": {"origins": "*"}})
+CORS(app, expose_headers='Authorization', resources={r"/*": {"origins": "*"}})
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/SurveyBackendEnv/database/meta.db'
 db = SQLAlchemy(app)
 meta_keys = ["firstName","lastName","dateOfBirth","nativeLanguage","dateTime","sessionID"]
@@ -132,9 +134,8 @@ def validate_token(request):
 @app.route('/audio', methods=['POST'])
 def soundfile():
 
-    if request.method == 'POST' and validate_token(request) is not None:
-
-        payload = validate_token(request)
+    payload = validate_token(request)
+    if request.method == 'POST' and payload is not None:
 
 
 
