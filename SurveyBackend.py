@@ -120,7 +120,7 @@ def meta():
 
 
 
-@app.route('/audio', methods=['PUT'])
+@app.route('/audio', methods=['POST'])
 def soundfile():
 
     if request.method == 'POST':
