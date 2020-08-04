@@ -7,7 +7,7 @@ import datetime
 app = Flask(__name__)
 
 
-if app.config['ENV'] == "production":
+if app.config['ENV'] == 'production':
     app.config['DEBUG'] = False
     app.config['SECRET_KEY'] = 'brrr'
     app.config['SOUNDFILE_UPLOAD'] = '/srv/data/soundfiles'
@@ -112,8 +112,8 @@ def meta():
 
 
         # to-do: put that shit in a database with saveMeta
-        token = encode_auth_token(meta_data).decode()
-
+        token = encode_auth_token(meta_data).decode() # b'abc123' -> "abc123"
+        print(token)
         return {'token':token}, 200
     else:
         return {'msg': 'Missing keys or wrong request method'}, 403
