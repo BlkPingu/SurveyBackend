@@ -22,19 +22,11 @@ else:
 
     print(f'ENV is set to: {app.config["ENV"]}')
 
-CORS(app, expose_headers='Authorization', resources={r"/*": {"origins": "*"}})
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/SurveyBackendEnv/database/meta.db'
+CORS(app)
+
 db = SQLAlchemy(app)
 meta_keys = ["firstName","lastName","dateOfBirth","nativeLanguage","dateTime","sessionID"]
 
-# app.config['SECRET_KEY'] = secret_key
-# app.config['SECRET_KEY'] = 'secret'
-
-# ssl_context=context
-# from OpenSSL import SSL
-# context = SSL.Context(SSL.PROTOCOL_TLSv1_2)
-# context.use_privatekey_file('server.key')
-# context.use_certificate_file('server.crt')
 
 
 class User(db.Model):
