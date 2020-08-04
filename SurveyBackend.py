@@ -18,13 +18,9 @@ else:
     app.config['SOUNDFILE_UPLOAD'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/soundfiles'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/database/meta.db'
 
-
-
-
     print(f'ENV is set to: {app.config["ENV"]}')
-    print(app.config['SECRET_KEY'])
 
-CORS(app, expose_headers='Authorization', resources={r"/*": {"origins": "*"}})
+# CORS(app, expose_headers='Authorization', resources={r"/*": {"origins": "*"}})
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/SurveyBackendEnv/database/meta.db'
 db = SQLAlchemy(app)
 meta_keys = ["firstName","lastName","dateOfBirth","nativeLanguage","dateTime","sessionID"]
@@ -113,58 +109,44 @@ def meta():
 
         # to-do: put that shit in a database with saveMeta
         token = encode_auth_token(meta_data).decode() # b'abc123' -> "abc123"
-        print(token)
         return {'token':token}, 200
     else:
         return {'msg': 'Missing keys or wrong request method'}, 403
 
 
+def validate_token(request):
+
+    try:
+        bearer_token = request.headers['Authorization']
+
+        print("with PREFIX: " + bearer_token)
+        token_string = get_token(bearer_token)
+        print("without PREFIX: " + token_string)
+        token_bytes = token_string.encode()
+        payload = jwt.decode(token_bytes, app.config['SECRET_KEY'])
+        return payload
+    except:
+        print("token validation went wrong")
+        return None
 
 @app.route('/audio', methods=['POST'])
 def soundfile():
 
-    if request.method == 'POST':
+    if request.method == 'POST' and validate_token(request) is not None:
 
-        try:
-            bearer_token = request.headers['Authorization']
-        except KeyError:
-            return {'msg':'No token.'}, 403
-
-        if bearer_token:
-            token_string = get_token(bearer_token)
-        else: return {'msg':'No token.'}, 403
-
-        token_bytes = token_string.encode()
-
-        try:
-            payload = jwt.decode(token_bytes, app.config['SECRET_KEY'])
-
-        except jwt.ExpiredSignatureError:
-            return {'msg':'Signature expired. Please log in again.'}, 403
-        except jwt.InvalidTokenError:
-            return {'msg':'Invalid token. Please log in again.'}, 403
-
-        # if request['filename']:
-
-        # if foldername['filename']:
-            pass
-
-        # if 'audio' in request.files:
-            # filename = images.save(request.files['audio'])
-            # image_filename = filename
-            # image_url = images.url(filename)
+        payload = validate_token(request)
 
 
 
         print(payload)
-        print(token_json['firstName'])
-        print(token_json['lastName'])
+        print(payload['firstName'])
+        print(payload['lastName'])
 
         # to-do: write payload into if-not-exists new folder with saveSoundfile
 
         return {'msg': "Successfully submitted Soundfile"}, 200
     else:
-        return {'msg':'Wrong request method'}, 403
+        return {'msg':'Wrong request method or bad token'}, 403
 
 
 
