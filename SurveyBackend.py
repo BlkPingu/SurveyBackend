@@ -97,7 +97,7 @@ def generic():
 
 
 
-@app.route('/meta', methods=['PUT', 'OPTIONS'])
+@app.route('/meta', methods=['PUT'])
 def meta():
     meta_data = request.json
     if request.method == 'PUT' and validate_json_payload(meta_data, meta_keys):
@@ -125,7 +125,7 @@ def validate_token(request):
         print("token validation went wrong")
         return None
 
-@app.route('/audio', methods=['POST', 'OPTIONS'])
+@app.route('/audio', methods=['POST'])
 def soundfile():
 
     payload = validate_token(request)
