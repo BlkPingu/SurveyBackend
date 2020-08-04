@@ -22,8 +22,9 @@ else:
 
     print(f'ENV is set to: {app.config["ENV"]}')
 
-CORS(app, resources={ r'/*': {'origins': 'https://tobiaskolb.dev'}}, supports_credentials=True)
+CORS(app, resources={ r'/*': {'origins': '*'}}, supports_credentials=True)
 
+#'https://tobiaskolb.dev'
 
 
 
