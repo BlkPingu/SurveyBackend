@@ -120,14 +120,10 @@ def meta():
 
 
 
-@app.route('/soundfile', methods=['PUT'])
+@app.route('/audio', methods=['PUT'])
 def soundfile():
 
-
-
-
     if request.method == 'POST':
-
 
         try:
             bearer_token = request.headers['Authorization']
