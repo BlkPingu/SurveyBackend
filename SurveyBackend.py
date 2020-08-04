@@ -1,7 +1,6 @@
 from flask import Flask, request, redirect, url_for, Response, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-import secrets
 import jwt
 import datetime
 
@@ -115,7 +114,7 @@ def meta():
         # to-do: put that shit in a database with saveMeta
         token = encode_auth_token(meta_data).decode()
 
-        return {"token": token}, 200
+        return Response(headers={'Authorization':token}, status=200)
     else:
         return {"msg": "Missing keys or wrong request method"}, 403
     #
