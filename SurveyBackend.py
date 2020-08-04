@@ -33,6 +33,7 @@ meta_keys = ["firstName","lastName","dateOfBirth","nativeLanguage","dateTime","s
 
 
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), unique=True, nullable=False)
@@ -40,6 +41,7 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
 
 class Meta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -107,7 +109,7 @@ def meta():
 
         # to-do: put that shit in a database with saveMeta
         token = encode_auth_token(meta_data).decode() # b'abc123' -> "abc123"
-        return {'token':token}, 200, {"Access-Control-Allow-Origin": "*"}
+        return {'token':token}, 200
     else:
         return {'msg': 'Missing keys or wrong request method'}, 403
 
@@ -141,7 +143,10 @@ def soundfile():
 
         # to-do: write payload into if-not-exists new folder with saveSoundfile
 
-        return {'msg': "Successfully submitted Soundfile"}, 200, {"Access-Control-Allow-Origin": "*"}
+        resp = flask.Response("Soundfile submit worked")
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+
+        return resp
     else:
         return {'msg':'Wrong request method or bad token'}, 403
 
