@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 if app.config['ENV'] == "production":
     app.config['DEBUG'] = False
-    app.config['SECRET_KEY'] = 'brrr' #secrets.token_hex(16)
+    app.config['SECRET_KEY'] = 'brrr'
     app.config['SOUNDFILE_UPLOAD'] = '/srv/data/soundfiles'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///srv/data/database/meta.db'
 else:
@@ -30,7 +30,6 @@ CORS(app, expose_headers='Authorization', resources={r"/*": {"origins": "*"}})
 db = SQLAlchemy(app)
 meta_keys = ["firstName","lastName","dateOfBirth","nativeLanguage","dateTime","sessionID"]
 
-# secret_key = secrets.token_hex(16)
 # app.config['SECRET_KEY'] = secret_key
 # app.config['SECRET_KEY'] = 'secret'
 
