@@ -22,10 +22,10 @@ else:
 
     print(f'ENV is set to: {app.config["ENV"]}')
 
-CORS(app, resources={ r'/*': {'origins': '*'}}, supports_credentials=True)
+CORS(app, supports_credentials=True)
 
-#'https://tobiaskolb.dev'
-
+# 'https://tobiaskolb.dev'
+# resources={ r'/*': {'origins': '*'}}
 
 
 db = SQLAlchemy(app)
@@ -140,8 +140,13 @@ def soundfile():
         print(payload['lastName'])
 
         # to-do: write payload into if-not-exists new folder with saveSoundfile
+        response_headers =  {
+                                "Access-Control-Allow-Origin": "*",
+                                "Access-Control-Allow-Methods": "POST",
+                                "Access-Control-Allow-Headers": "Content-Type"
+                            }
 
-        return {'msg': "Successfully submitted Soundfile"}, 200
+        return {'msg': "Successfully submitted Soundfile"}, 200, response_headers
     else:
         return {'msg':'Wrong request method or bad token'}, 403
 
