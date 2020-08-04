@@ -22,7 +22,9 @@ else:
 
     print(f'ENV is set to: {app.config["ENV"]}')
 
-CORS(app)
+CORS(app, resources={ r'/*': {'origins': '*'}}, supports_credentials=True)
+
+
 
 db = SQLAlchemy(app)
 meta_keys = ["firstName","lastName","dateOfBirth","nativeLanguage","dateTime","sessionID"]
