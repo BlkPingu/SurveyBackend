@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import  FileStorage
 
 
+
 app = Flask(__name__)
 
 
@@ -24,17 +25,11 @@ else:
     app.config['SOUNDFILE_UPLOAD'] = '/Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/soundfiles'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/database/meta.db'
 
-    print(f'ENV is set to: {app.config["ENV"]}')
 
+print(f'ENV is set to: {app.config["ENV"]}')
 CORS(app, supports_credentials=True)
-
-# 'https://tobiaskolb.dev'
-# resources={ r'/*': {'origins': '*'}}
-
-
 db = SQLAlchemy(app)
 meta_keys = ["firstName","lastName","dateOfBirth","nativeLanguage","dateTime","sessionID"]
-
 
 
 class User(db.Model):
@@ -111,26 +106,38 @@ def meta():
 
 
         # to-do: put that shit in a database with saveMeta
-        token = encode_auth_token(meta_data).decode() # b'abc123' -> "abc123"
+
+        token = encode_auth_token(meta_data).decode()
         return {'token':token}, 200
     else:
         return {'msg': 'Missing keys or wrong request method'}, 403
 
+def save_file(directory, filename, file):
+    if not os.path.exists(directory):
+        try:
+            os.makedirs(directory)
+            file_path = os.path.join(directory, secure_filename(filename + '.wav'))
+            file.save(file_path)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+
+
 
 def validate_token(request):
-
     try:
         bearer_token = request.headers['Authorization']
 
-        print("with PREFIX: " + bearer_token)
         token_string = get_token(bearer_token)
-        print("without PREFIX: " + token_string)
         token_bytes = token_string.encode()
         payload = jwt.decode(token_bytes, app.config['SECRET_KEY'])
         return payload
     except:
         print("token validation went wrong")
         return None
+
+
+
 
 @app.route('/audio', methods=['POST'])
 def soundfile():
@@ -140,16 +147,14 @@ def soundfile():
 
     if request.method == 'POST' and token_data is not None and file is not None:
 
-        print(token_data)
-        print(token_data['firstName'])
-        print(token_data['lastName'])
+        filename = request.form['filename']
+        foldername = request.form['foldername']
+        directory = os.path.join(app.config.get('SOUNDFILE_UPLOAD'),foldername)
 
+        save_file(directory, filename, file)
 
+        # to-do filename in db schreiben
 
-        # da noch irgendwie subfolder name in den pfad rein
-        file.save(os.path.join(app.config.get('SOUNDFILE_UPLOAD'),secure_filename(file.filename)))
-        # filename in db schreiben
-        # to-do: write payload into if-not-exists new folder with saveSoundfile
         resp = Response("Soundfile submit worked")
         resp.headers['Access-Control-Allow-Origin'] = '*'
 
