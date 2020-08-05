@@ -4,6 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 import jwt
 import datetime
 from flask_cors import CORS,cross_origin
+import os
+
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import  FileStorage
 
 
 app = Flask(__name__)
@@ -17,7 +21,7 @@ if app.config['ENV'] == 'production':
 else:
     app.config['DEBUG'] = True
     app.config['SECRET_KEY'] = 'secret'
-    app.config['SOUNDFILE_UPLOAD'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/soundfiles'
+    app.config['SOUNDFILE_UPLOAD'] = '/Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/soundfiles'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/database/meta.db'
 
     print(f'ENV is set to: {app.config["ENV"]}')
@@ -56,7 +60,7 @@ class Meta(db.Model):
 
 def encode_auth_token(payload):
     signed_token = {
-          'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=600),
+          'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1),
           'iat': datetime.datetime.utcnow(),
           'firstName':payload['firstName'],
           'lastName':payload['lastName'],
@@ -132,8 +136,9 @@ def validate_token(request):
 def soundfile():
 
     token_data = validate_token(request)
+    file = request.files['audio']
 
-    if request.method == 'POST' and token_data is not None and request.files['audio'] is not None:
+    if request.method == 'POST' and token_data is not None and file is not None:
 
         print(token_data)
         print(token_data['firstName'])
@@ -145,7 +150,7 @@ def soundfile():
         file.save(os.path.join(app.config.get('SOUNDFILE_UPLOAD'),secure_filename(file.filename)))
         # filename in db schreiben
         # to-do: write payload into if-not-exists new folder with saveSoundfile
-        resp = flask.Response("Soundfile submit worked")
+        resp = Response("Soundfile submit worked")
         resp.headers['Access-Control-Allow-Origin'] = '*'
 
         return resp
