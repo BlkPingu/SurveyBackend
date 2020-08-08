@@ -98,7 +98,6 @@ def generic():
 def meta():
     metadata = request.json
     if request.method == 'PUT' and validate_json_payload(metadata, meta_keys):
-        print(metadata)
         save_meta(metadata)
 
         token = encode_auth_token(metadata).decode()
