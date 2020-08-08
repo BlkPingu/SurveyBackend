@@ -59,7 +59,7 @@ def validate_json_payload(meta_keys, metadata):
 
 
 def save_meta(metadata):
-    directory = os.path.join(app.config['METADATA_UPLOAD'],metadata['sessionID'])
+    directory = os.path.join(app.config['METADATA_UPLOAD'])
 
     if not os.path.exists(directory):
         try:
@@ -69,7 +69,7 @@ def save_meta(metadata):
                 raise
 
     metadata = {
-            'uuid': directory,
+            'uuid': metadata['sessionID'],
             'age_range': metadata['age'],
             'request': metadata['nativeLanguage'],
             'gender': metadata['gender']
