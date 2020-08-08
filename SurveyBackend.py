@@ -67,18 +67,18 @@ def save_meta(metadata):
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
-    else:
-        metadata = {
-                'uuid': directory,
-                'age_range': metadata['age'],
-                'request': metadata['nativeLanguage'],
-                'gender': metadata['gender']
-            }
-        file_path = os.path.join(directory, secure_filename('metadata' + directory + '.json'))
+
+    metadata = {
+            'uuid': directory,
+            'age_range': metadata['age'],
+            'request': metadata['nativeLanguage'],
+            'gender': metadata['gender']
+        }
+    file_path = os.path.join(directory, secure_filename('metadata' + directory + '.json'))
 
 
-        with open(file_path, 'w') as fp:
-            json.dump(metadata, fp)
+    with open(file_path, 'w') as fp:
+        json.dump(metadata, fp)
 
 def get_token(bearer_token):
     PREFIX = 'Bearer '
@@ -112,9 +112,9 @@ def save_wav(directory, filename, file):
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
-    else:
-        file_path = os.path.join(directory, secure_filename(filename + '.wav'))
-        file.save(file_path)
+
+    file_path = os.path.join(directory, secure_filename(filename + '.wav'))
+    file.save(file_path)
 
 
 def validate_token(request):
