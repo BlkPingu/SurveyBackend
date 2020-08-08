@@ -69,12 +69,12 @@ def save_meta(metadata):
                 raise
 
     metadata = {
-            'uuid': metadata['sessionID'],
+            'uuid': directory,
             'age_range': metadata['age'],
             'request': metadata['nativeLanguage'],
             'gender': metadata['gender']
         }
-    file_path = os.path.join(directory, secure_filename('metadata' + directory + '.json'))
+    file_path = os.path.join(directory, secure_filename('metadata' + metadata['sessionID'] + '.json'))
 
 
     with open(file_path, 'w') as fp:
