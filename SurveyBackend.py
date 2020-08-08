@@ -20,40 +20,18 @@ if app.config['ENV'] == 'production':
     app.config['DEBUG'] = False
     app.config['SECRET_KEY'] = 'brrr'
     app.config['SOUNDFILE_UPLOAD'] = '/srv/data/soundfiles'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///srv/data/database/meta.db'
+    app.config['METADATA_UPLOAD'] = '/srv/data/soundfiles'
 else:
     app.config['DEBUG'] = True
     app.config['SECRET_KEY'] = 'secret'
     app.config['SOUNDFILE_UPLOAD'] = '/Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/soundfiles'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/database/meta.db'
+    app.config['METADATA_UPLOAD'] = '/srv/data/soundfiles'
 
 
 print(f'ENV is set to: {app.config["ENV"]}')
 CORS(app, supports_credentials=True)
-db = SQLAlchemy(app)
+
 meta_keys = ['gender', 'age', 'nativeLanguage', 'dateTime', 'sessionID']
-
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(30), unique=True, nullable=False)
-    email = db.Column(db.String(30), unique=True, nullable=False)
-
-    def __repr__(self):
-        return '<User %r>' % self.username
-
-
-class Meta(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    session_id = db.Column(db.String(100), primary_key=True)
-    time_created = db.Column(db.String(20), unique=False, nullable=False)
-    last_name = db.Column(db.String(80), unique=False, nullable=False)
-    first_name = db.Column(db.String(80), unique=False, nullable=False)
-    age = db.Column(db.Integer, unique=False, nullable=False)
-    token = db.Column(db.String(200), unique=True)
-
-    def __repr__(self):
-        return '<Session %r>' % self.session
 
 def encode_auth_token(payload):
     signed_token = {
@@ -93,7 +71,7 @@ def saveMeta(request):
                 'request': request['nativeLanguage'],
                 'gender': request['gender']
             }
-            file_path = os.path.join(directory, secure_filename('metadata' + directory + '.json'))
+            file_path = os.path.join(config['METADATA_UPLOAD'], secure_filename('metadata' + directory + '.json'))
 
 
             with open(file_path, 'w') as fp:
@@ -122,9 +100,7 @@ def meta():
     meta_data = request.json
     if request.method == 'PUT' and validate_json_payload(meta_data, meta_keys):
 
-
-
-        # to-do: put that in the directory for the files
+        saveMeta(request)
 
         token = encode_auth_token(meta_data).decode()
         return {'token':token}, 200
