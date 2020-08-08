@@ -20,12 +20,12 @@ if app.config['ENV'] == 'production':
     app.config['DEBUG'] = False
     app.config['SECRET_KEY'] = 'brrr'
     app.config['SOUNDFILE_UPLOAD'] = '/srv/data/soundfiles'
-    app.config['METADATA_UPLOAD'] = '/srv/data/soundfiles'
+    app.config['METADATA_UPLOAD'] = '/srv/data/database'
 else:
     app.config['DEBUG'] = True
     app.config['SECRET_KEY'] = 'secret'
-    app.config['SOUNDFILE_UPLOAD'] = '/Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/soundfiles'
-    app.config['METADATA_UPLOAD'] = '/srv/data/soundfiles'
+    app.config['SOUNDFILE_UPLOAD'] = '/Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/data/soundfiles'
+    app.config['METADATA_UPLOAD'] = '/Users/Tobias/Desktop/Bachelorarbeit/Code/SurveyPage/data/database'
 
 
 print(f'ENV is set to: {app.config["ENV"]}')
