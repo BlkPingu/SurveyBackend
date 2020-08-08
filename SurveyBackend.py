@@ -51,15 +51,15 @@ def encode_auth_token(payload):
         return e
 
 
-def validate_json_payload(meta_keys, meta_data):
+def validate_json_payload(meta_keys, metadata):
   for key in meta_keys:
-    if key not in meta_data:
+    if key not in metadata:
       return False
   return True
 
 
-def saveMeta(request):
-    directory = requrest['sessionID']
+def saveMeta(metadata):
+    directory = metadata['sessionID']
 
     if not os.path.exists(directory):
         try:
@@ -67,11 +67,11 @@ def saveMeta(request):
 
             metadata = {
                 'uuid': directory,
-                'age_range': request['age'],
-                'request': request['nativeLanguage'],
-                'gender': request['gender']
+                'age_range': metadata['age'],
+                'request': metadata['nativeLanguage'],
+                'gender': metadata['gender']
             }
-            file_path = os.path.join(config['METADATA_UPLOAD'], secure_filename('metadata' + directory + '.json'))
+            file_path = os.path.join(app.config['METADATA_UPLOAD'], secure_filename('metadata' + directory + '.json'))
 
 
             with open(file_path, 'w') as fp:
@@ -97,12 +97,12 @@ def generic():
 
 @app.route('/meta', methods=['PUT'])
 def meta():
-    meta_data = request.json
-    if request.method == 'PUT' and validate_json_payload(meta_data, meta_keys):
+    metadata = request.json
+    if request.method == 'PUT' and validate_json_payload(metadata, meta_keys):
 
-        saveMeta(request)
+        saveMeta(metadata)
 
-        token = encode_auth_token(meta_data).decode()
+        token = encode_auth_token(metadata).decode()
         return {'token':token}, 200
     else:
         return {'msg': 'Missing keys or wrong request method'}, 403
