@@ -5,6 +5,8 @@ import jwt
 import datetime
 from flask_cors import CORS,cross_origin
 import os
+import json
+
 
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import  FileStorage
@@ -29,7 +31,7 @@ else:
 print(f'ENV is set to: {app.config["ENV"]}')
 CORS(app, supports_credentials=True)
 db = SQLAlchemy(app)
-meta_keys = ["firstName","lastName","dateOfBirth","nativeLanguage","dateTime","sessionID"]
+meta_keys = ['gender', 'age', 'nativeLanguage', 'dateTime', 'sessionID']
 
 
 class User(db.Model):
@@ -55,11 +57,8 @@ class Meta(db.Model):
 
 def encode_auth_token(payload):
     signed_token = {
-          'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1),
+          'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=3),
           'iat': datetime.datetime.utcnow(),
-          'firstName':payload['firstName'],
-          'lastName':payload['lastName'],
-          'dateOfBirth':payload['dateOfBirth'],
           'sessionID':payload['sessionID']
         }
 
@@ -81,9 +80,30 @@ def validate_json_payload(meta_keys, meta_data):
   return True
 
 
-def saveMeta(json):
-    #to-do
-    return True
+def saveMeta(request):
+    directory = requrest['sessionID']
+
+    if not os.path.exists(directory):
+        try:
+            os.makedirs(directory)
+
+            metadata = {
+                'uuid': directory,
+                'age_range': request['age'],
+                'request': request['nativeLanguage'],
+                'gender': request['gender']
+            }
+            file_path = os.path.join(directory, secure_filename('metadata' + directory + '.json'))
+
+
+            with open(file_path, 'w') as file:
+                json_string = json.dumps(metadata, default=lambda o: o.__dict__, sort_keys=True, indent=2)
+                file.write(json_string)
+
+            file.save(file_path)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
 
 
 def get_token(bearer_token):
@@ -105,7 +125,8 @@ def meta():
     if request.method == 'PUT' and validate_json_payload(meta_data, meta_keys):
 
 
-        # to-do: put that shit in a database with saveMeta
+
+        # to-do: put that in the directory for the files
 
         token = encode_auth_token(meta_data).decode()
         return {'token':token}, 200
@@ -133,7 +154,7 @@ def validate_token(request):
         payload = jwt.decode(token_bytes, app.config['SECRET_KEY'])
         return payload
     except:
-        print("token validation went wrong")
+        print('token validation went wrong')
         return None
 
 
@@ -152,10 +173,7 @@ def soundfile():
         directory = os.path.join(app.config.get('SOUNDFILE_UPLOAD'),foldername)
 
         save_file(directory, filename, file)
-
-        # to-do filename in db schreiben
-
-        resp = Response("Soundfile submit worked")
+        resp = Response('Soundfile submit worked')
         resp.headers['Access-Control-Allow-Origin'] = '*'
 
         return resp
