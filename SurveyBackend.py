@@ -60,6 +60,7 @@ def validate_json_payload(meta_keys, metadata):
 
 def save_meta(metadata):
     directory = os.path.join(app.config['METADATA_UPLOAD'])
+    session_id = metadata['sessionID']
 
     if not os.path.exists(directory):
         try:
@@ -69,12 +70,12 @@ def save_meta(metadata):
                 raise
 
     metadata = {
-            'uuid': directory,
+            'uuid': metadata['sessionID'],
             'age_range': metadata['age'],
             'request': metadata['nativeLanguage'],
             'gender': metadata['gender']
         }
-    file_path = os.path.join(directory, secure_filename('metadata' + metadata['sessionID'] + '.json'))
+    file_path = os.path.join(directory, secure_filename(session_id + '.json'))
 
 
     with open(file_path, 'w') as fp:
@@ -97,7 +98,7 @@ def generic():
 def meta():
     metadata = request.json
     if request.method == 'PUT' and validate_json_payload(metadata, meta_keys):
-
+        print(metadata)
         save_meta(metadata)
 
         token = encode_auth_token(metadata).decode()
