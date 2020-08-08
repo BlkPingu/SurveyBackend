@@ -58,29 +58,27 @@ def validate_json_payload(meta_keys, metadata):
   return True
 
 
-def saveMeta(metadata):
-    directory = metadata['sessionID']
+def save_meta(metadata):
+    directory = os.path.join(app.config['METADATA_UPLOAD'],metadata['sessionID'])
 
     if not os.path.exists(directory):
         try:
             os.makedirs(directory)
-
-            metadata = {
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+    else:
+        metadata = {
                 'uuid': directory,
                 'age_range': metadata['age'],
                 'request': metadata['nativeLanguage'],
                 'gender': metadata['gender']
             }
-            file_path = os.path.join(app.config['METADATA_UPLOAD'], secure_filename('metadata' + directory + '.json'))
+        file_path = os.path.join(directory, secure_filename('metadata' + directory + '.json'))
 
 
-            with open(file_path, 'w') as fp:
-                json.dump(metadata, fp)
-
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise
-
+        with open(file_path, 'w') as fp:
+            json.dump(metadata, fp)
 
 def get_token(bearer_token):
     PREFIX = 'Bearer '
@@ -100,23 +98,23 @@ def meta():
     metadata = request.json
     if request.method == 'PUT' and validate_json_payload(metadata, meta_keys):
 
-        saveMeta(metadata)
+        save_meta(metadata)
 
         token = encode_auth_token(metadata).decode()
         return {'token':token}, 200
     else:
         return {'msg': 'Missing keys or wrong request method'}, 403
 
-def save_file(directory, filename, file):
+def save_wav(directory, filename, file):
     if not os.path.exists(directory):
         try:
             os.makedirs(directory)
-            file_path = os.path.join(directory, secure_filename(filename + '.wav'))
-            file.save(file_path)
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
-
+    else:
+        file_path = os.path.join(directory, secure_filename(filename + '.wav'))
+        file.save(file_path)
 
 
 def validate_token(request):
@@ -146,7 +144,7 @@ def soundfile():
         foldername = request.form['foldername']
         directory = os.path.join(app.config.get('SOUNDFILE_UPLOAD'),foldername)
 
-        save_file(directory, filename, file)
+        save_wav(directory, filename, file)
         resp = Response('Soundfile submit worked')
         resp.headers['Access-Control-Allow-Origin'] = '*'
 
