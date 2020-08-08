@@ -96,11 +96,9 @@ def saveMeta(request):
             file_path = os.path.join(directory, secure_filename('metadata' + directory + '.json'))
 
 
-            with open(file_path, 'w') as file:
-                json_string = json.dumps(metadata, default=lambda o: o.__dict__, sort_keys=True, indent=2)
-                file.write(json_string)
+            with open(file_path, 'w') as fp:
+                json.dump(metadata, fp)
 
-            file.save(file_path)
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
