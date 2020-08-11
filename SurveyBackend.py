@@ -18,7 +18,7 @@ app = Flask(__name__)
 
 if app.config['ENV'] == 'production':
     app.config['DEBUG'] = False
-    app.config['SECRET_KEY'] = 'brrr'
+    app.config['SECRET_KEY'] = '2b7a378fdb64872a1591861b815f82d7'
     app.config['SOUNDFILE_UPLOAD'] = '/srv/data/soundfiles'
     app.config['METADATA_UPLOAD'] = '/srv/data/database'
 else:
